@@ -9,6 +9,7 @@
     <style type="text/css">
         .black-background { background-color: #000000; }
         .white { color: #ffffff; }
+        .advanced-options { margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -19,11 +20,18 @@
         <input type="hidden" name="engine" value="google" id="engine">
         <div class="row" align="center">
             <div class="col-lg-8 col-lg-offset-2">
+                <!-- Placeholder for logo -->
+                <img src="path_to_your_logo_placeholder_image.jpg" alt="Logo Placeholder" id="logo" />
                 <div class="input-group">
                     <div class="input-group-btn">
                         <button id="ddbutton" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Choose Filetype <span class="caret"></span></button>
                         <ul class="dropdown-menu">
-                            <!-- Filetype options -->
+                            <li><a href="#" onclick="setFiletype('mkv|mp4|avi|mov|mpg|wmv|divx|mpeg', 'TV/Movies', 'film')"><span class="glyphicon glyphicon-film" aria-hidden="true"></span> TV/Movies/Video</a></li>
+                            <li><a href="#" onclick="setFiletype('MOBI|CBZ|CBR|CBC|CHM|EPUB|FB2|LIT|LRF|ODT|PDF|PRC|PDB|PML|RB|RTF|TCR|DOC|DOCX', 'Books', 'book')"><span class="glyphicon glyphicon-book" aria-hidden="true"></span> Books</a></li>
+                            <li><a href="#" onclick="setFiletype('mp3|wav|ac3|ogg|flac|wma|m4a|aac|mod', 'Music', 'music')"><span class="glyphicon glyphicon-music" aria-hidden="true"></span> Music</a></li>
+                            <li><a href="#" onclick="setFiletype('exe|iso|dmg|tar|7z|bz2|gz|rar|zip|apk', 'Software/ISO/DMG/Games', 'cd')"><span class="glyphicon glyphicon-cd" aria-hidden="true"></span> Software/ISO/DMG/Games</a></li>
+                            <li><a href="#" onclick="setFiletype('jpg|png|bmp|gif|tif|tiff|psd', 'Images', 'picture')"><span class="glyphicon glyphicon-picture" aria-hidden="true"></span> Images</a></li>
+                            <li><a href="#" onclick="setFiletype('-1', 'Other', 'asterisk')"><span class="glyphicon glyphicon-asterisk" aria-hidden="true"></span> Other</a></li>
                         </ul>
                     </div>
                     <input type="text" name="query" id="query" class="form-control" placeholder="Search anything e.g The.Blacklist.S01.E01">
@@ -32,6 +40,42 @@
                     </span>
                 </div>
                 <div class="input-group">
+                    <!-- Placeholder for background image -->
+                    <img src="path_to_your_background_image_placeholder.jpg" alt="Background Image Placeholder" id="backgroundImage" style="width: 100%; height: auto;">
+                    <button id="engineButton" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-search"></span> Google <span class="caret"></span></button>
+                    <ul class="dropdown-menu">
+                        <li><a href="#" onclick="setEngine('google')">Google</a></li>
+                        <li><a href="#" onclick="setEngine('googol')">Googol</a></li>
+                        <li><a href="#" onclick="setEngine('startpage')">Startpage</a></li>
+                        <li><a href="#" onclick="setEngine('searx')">Searx</a></li>
+                        <li><a href="#" onclick="setEngine('filepursuit')">FilePursuit</a></li>
+                        <!-- Additional search engines -->
+                        <li><a href="#" onclick="setEngine('bing')">Bing</a></li>
+                        <li><a href="#" onclick="setEngine('duckduckgo')">DuckDuckGo</a></li>
+                    </ul>
+                </div>
+                <div class="input-group advanced-options">
+                    <label for="dateRange">Date Range:</label>
+                    <select id="dateRange" class="form-control">
+                        <option value="">Any Time</option>
+                        <option value="past_hour">Past Hour</option>
+                        <option value="past_24_hours">Past 24 Hours</option>
+                        <option value="past_week">Past Week</option>
+                        <option value="past_month">Past Month</option>
+                        <option value="past_year">Past Year</option>
+                    </select>
+                </div>
+                <div class="input-group advanced-options">
+                    <label for="fileSize">File Size:</label>
+                    <select id="fileSize" class="form-control">
+                        <option value="">Any Size</option>
+                        <option value="small">Small (&lt; 10MB)</option>
+                        <option value="medium">Medium (10MB - 100MB)</option>
+                        <option value="large">Large (100MB - 1GB)</option>
+                        <option value="extra_large">Extra Large (&gt; 1GB)</option>
+                    </select>
+                </div>
+                <div class="input-group advanced-options">
                     <input type="checkbox" id="filterCheckbox" name="filter" value="filter"> Filter Results
                 </div>
             </div>
@@ -57,22 +101,79 @@
         $("#query").focus();
     }
 
+    function setEngine(engine) {
+        $("#engine").val(engine);
+        var engineNames = {
+            'google': 'Google',
+            'googol': 'Googol',
+            'startpage': 'Startpage',
+            'searx': 'Searx',
+            'filepursuit': 'FilePursuit',
+            'bing': 'Bing',
+            'duckduckgo': 'DuckDuckGo'
+        };
+        $("#engineButton").html('<span class="glyphicon glyphicon-search"></span> ' + engineNames[engine] + ' <span class="caret"></span>');
+    }
+
     function startSearch() {
         var query = document.getElementById('query').value;
         var fileType = document.getElementById('fileType').value;
         var engine = document.getElementById('engine').value;
         var filter = document.getElementById('filterCheckbox').checked;
-        var filterString = filter ? "-site:example.com -site:anotherexample.com" : "";
+        var dateRange = document.getElementById('dateRange').value;
+        var fileSize = document.getElementById('fileSize').value;
 
-        var finalQuery = query + " " + fileType + " " + filterString + " intitle:index.of -inurl:(jsp|pl|php|html|aspx|htm|cf|shtml) -inurl:(listen77|mp3raid|mp3toss|mp3drug|index_of|index-of|wallywashis|downloadmana)";
+        var filterString = filter ? "-site:example.com -site:anotherexample.com" : "";
+        var dateString = "";
+        if (dateRange) {
+            var dateOptions = {
+                'past_hour': 'qdr:h',
+                'past_24_hours': 'qdr:d',
+                'past_week': 'qdr:w',
+                'past_month': 'qdr:m',
+                'past_year': 'qdr:y'
+            };
+            dateString = "&tbs=" + dateOptions[dateRange];
+        }
+
+        var fileSizeString = "";
+        if (fileSize) {
+            var fileSizeOptions = {
+                'small': 'size:s',
+                'medium': 'size:m',
+                'large': 'size:l',
+                'extra_large': 'size:xl'
+            };
+            fileSizeString = " " + fileSizeOptions[fileSize];
+        }
+
+        var finalQuery = query + " filetype:" + fileType + filterString + " -inurl:(jsp|pl|php|html|aspx|htm|cf|shtml) -inurl:(listen77|mp3raid|mp3toss|mp3drug|index_of|index-of|wallywashis|downloadmana)" + dateString + fileSizeString;
 
         var url = "";
         switch (engine) {
             case 'google':
                 url = "https://www.google.com/search?q=" + encodeURIComponent(finalQuery);
                 break;
-            // Additional search engines
+            case 'googol':
+                url = "https://googol.warriordudimanche.net/?q=" + encodeURIComponent(finalQuery);
+                break;
+            case 'startpage':
+                url = "https://www.startpage.com/do/dsearch?query=" + encodeURIComponent(finalQuery);
+                break;
+            case 'searx':
+                url = "https://searx.me/?q=" + encodeURIComponent(finalQuery);
+                break;
+            case 'filepursuit':
+                url = "https://filepursuit.com/search/" + encodeURIComponent(query.replace(/ /g, "+")) + "/type/" + encodeURIComponent(fileType);
+                break;
+            case 'bing':
+                url = "https://www.bing.com/search?q=" + encodeURIComponent(finalQuery);
+                break;
+            case 'duckduckgo':
+                url = "https://duckduckgo.com/?q=" + encodeURIComponent(finalQuery);
+                break;
         }
+
         window.open(url, '_blank');
     }
 </script>
